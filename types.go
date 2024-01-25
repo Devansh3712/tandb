@@ -17,10 +17,10 @@ type Store struct {
 }
 
 func (v *Value) expired() bool {
+	if v.Expiration == -1 {
+		return false
+	}
 	now := time.Now()
 	TTL := v.Timestamp.Add(v.Expiration)
-	if now.After(TTL) {
-		return true
-	}
-	return false
+	return now.After(TTL)
 }
