@@ -20,7 +20,7 @@ func (c *Command) write(msg string) {
 }
 
 func (c *Command) error(err error) {
-	c.write(err.Error())
+	c.write("[ERROR] " + err.Error())
 }
 
 func (s *Server) get(cmd Command) {
@@ -47,5 +47,30 @@ func (s *Server) setEx(cmd Command) {
 	err = s.DB.SetEx(cmd.Args[0], []byte(cmd.Args[1]), time.Duration(ttl))
 	if err != nil {
 		cmd.error(ErrKeyExists)
+	}
+}
+
+func (s *Server) del(cmd Command) {
+	err := s.DB.Del(cmd.Args[0])
+	if err != nil {
+		cmd.error(ErrKeyNotExists)
+	}
+}
+
+func (s *Server) exp(cmd Command) {
+	expiration, err := strconv.Atoi(cmd.Args[1])
+	if err != nil {
+		cmd.error(ErrInvalidExp)
+	}
+	err = s.DB.Exp(cmd.Args[0], time.Duration(expiration))
+	if err != nil {
+		cmd.error(ErrKeyNotExists)
+	}
+}
+
+func (s *Server) keys(cmd Command) {
+	keys := s.DB.Keys()
+	for _, key := range keys {
+		cmd.write(key)
 	}
 }

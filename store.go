@@ -54,6 +54,38 @@ func (s *Store) Get(key string) (Value, error) {
 	return value, nil
 }
 
+func (s *Store) Del(key string) error {
+	if !s.Has(key) {
+		return ErrKeyNotExists
+	}
+	delete(s.Records, key)
+	return nil
+}
+
+func (s *Store) Exp(key string, expiration time.Duration) error {
+	s.Mutex.Lock()
+	defer s.Mutex.Unlock()
+
+	value, ok := s.Records[key]
+	if !ok {
+		return ErrKeyNotExists
+	}
+	value.Expiration = expiration
+	s.Records[key] = value
+	return nil
+}
+
+func (s *Store) Keys() []string {
+	var keys []string
+	s.Mutex.RLock()
+	defer s.Mutex.RUnlock()
+
+	for key := range s.Records {
+		keys = append(keys, key)
+	}
+	return keys
+}
+
 // Run a background job to check if any key has reached its expiration
 // time and remove it from the store
 func (s *Store) checkTTL() {

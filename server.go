@@ -9,7 +9,10 @@ import (
 
 const (
 	CMD_GET   = "GET"
+	CMD_DEL   = "DEL"
+	CMD_EXP   = "EXP"
 	CMD_SET   = "SET"
+	CMD_KEYS  = "KEYS"
 	CMD_SETEX = "SETEX"
 )
 
@@ -69,8 +72,14 @@ func (s *Server) HandleCommand() {
 		switch cmd.Value {
 		case CMD_GET:
 			s.get(cmd)
+		case CMD_DEL:
+			s.del(cmd)
+		case CMD_EXP:
+			s.exp(cmd)
 		case CMD_SET:
 			s.set(cmd)
+		case CMD_KEYS:
+			s.keys(cmd)
 		case CMD_SETEX:
 			s.setEx(cmd)
 		default:
