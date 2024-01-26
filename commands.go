@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -29,7 +30,7 @@ func (s *Server) get(cmd Command) {
 		cmd.error(ErrKeyNotExists)
 		return
 	}
-	cmd.write(string(result.Data))
+	cmd.write(string(result))
 }
 
 func (s *Server) set(cmd Command) {
@@ -57,6 +58,13 @@ func (s *Server) del(cmd Command) {
 	}
 }
 
+func (s *Server) mGet(cmd Command) {
+	result := s.DB.MGet(cmd.Args)
+	for index, value := range result {
+		cmd.write(fmt.Sprintf("%d) %s", index + 1, value))
+	}
+}
+
 func (s *Server) exp(cmd Command) {
 	expiration, err := strconv.Atoi(cmd.Args[1])
 	if err != nil {
@@ -70,7 +78,7 @@ func (s *Server) exp(cmd Command) {
 
 func (s *Server) keys(cmd Command) {
 	keys := s.DB.Keys()
-	for _, key := range keys {
-		cmd.write(key)
+	for index, key := range keys {
+		cmd.write(fmt.Sprintf("%d) %s", index + 1, key))
 	}
 }

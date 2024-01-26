@@ -13,6 +13,7 @@ const (
 	CMD_EXP   = "EXP"
 	CMD_SET   = "SET"
 	CMD_KEYS  = "KEYS"
+	CMD_MGET  = "MGET"
 	CMD_SETEX = "SETEX"
 )
 
@@ -80,6 +81,8 @@ func (s *Server) HandleCommand() {
 			s.set(cmd)
 		case CMD_KEYS:
 			s.keys(cmd)
+		case CMD_MGET:
+			s.mGet(cmd)
 		case CMD_SETEX:
 			s.setEx(cmd)
 		default:

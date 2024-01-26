@@ -43,15 +43,27 @@ func (s *Store) Set(key string, value []byte) error {
 	return s.SetEx(key, value, -1)
 }
 
-func (s *Store) Get(key string) (Value, error) {
+func (s *Store) Get(key string) ([]byte, error) {
 	s.Mutex.RLock()
 	defer s.Mutex.RUnlock()
 
 	value, ok := s.Records[key]
 	if !ok {
-		return value, ErrKeyNotExists
+		return nil, ErrKeyNotExists
 	}
-	return value, nil
+	return value.Data, nil
+}
+
+func (s *Store) MGet(keys []string) [][]byte {
+	s.Mutex.RLock()
+	defer s.Mutex.RUnlock()
+	var values [][]byte
+
+	for _, key := range keys {
+		value, _ := s.Get(key)
+		values = append(values, value)
+	}
+	return values
 }
 
 func (s *Store) Del(key string) error {
