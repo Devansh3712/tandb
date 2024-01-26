@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net"
 	"sync"
 	"time"
 )
@@ -12,8 +13,22 @@ type Value struct {
 }
 
 type Store struct {
-	Mutex   sync.RWMutex
+	Mutex   *sync.RWMutex
 	Records map[string]Value
+}
+
+type Command struct {
+	Value string
+	Args  []string
+	Conn  net.Conn
+}
+
+type Server struct {
+	Wg       sync.WaitGroup
+	Addr     string
+	Listener net.Listener
+	Commands chan Command
+	DB       Store
 }
 
 func (v *Value) expired() bool {
@@ -21,6 +36,6 @@ func (v *Value) expired() bool {
 		return false
 	}
 	now := time.Now()
-	TTL := v.Timestamp.Add(v.Expiration)
-	return now.After(TTL)
+	ttl := v.Timestamp.Add(time.Second * v.Expiration)
+	return now.After(ttl)
 }
