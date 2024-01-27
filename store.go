@@ -15,6 +15,7 @@ func NewStore() Store {
 	return Store{
 		Mutex:   &sync.RWMutex{},
 		Records: make(map[string]Value),
+		Sets: make(map[string]Set),
 	}
 }
 

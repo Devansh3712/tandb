@@ -12,9 +12,15 @@ type Value struct {
 	Expiration time.Duration
 }
 
+type Set struct {
+	Mutex    *sync.RWMutex
+	Elements map[string]struct{}
+}
+
 type Store struct {
 	Mutex   *sync.RWMutex
 	Records map[string]Value
+	Sets    map[string]Set
 }
 
 type Command struct {
