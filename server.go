@@ -8,13 +8,15 @@ import (
 )
 
 const (
-	CMD_GET   = "GET"
-	CMD_DEL   = "DEL"
-	CMD_EXP   = "EXP"
-	CMD_SET   = "SET"
-	CMD_KEYS  = "KEYS"
-	CMD_MGET  = "MGET"
-	CMD_SETEX = "SETEX"
+	CMD_GET     = "GET"
+	CMD_DEL     = "DEL"
+	CMD_SET     = "SET"
+	CMD_KEYS    = "KEYS"
+	CMD_MGET    = "MGET"
+	CMD_SETEX   = "SETEX"
+	CMD_EXISTS  = "EXISTS"
+	CMD_EXPIRE  = "EXPIRE"
+	CMD_PERSIST = "PERSIST"
 )
 
 func NewServer(addr string) Server {
@@ -75,8 +77,6 @@ func (s *Server) HandleCommand() {
 			s.get(cmd)
 		case CMD_DEL:
 			s.del(cmd)
-		case CMD_EXP:
-			s.exp(cmd)
 		case CMD_SET:
 			s.set(cmd)
 		case CMD_KEYS:
@@ -85,8 +85,14 @@ func (s *Server) HandleCommand() {
 			s.mGet(cmd)
 		case CMD_SETEX:
 			s.setEx(cmd)
+		case CMD_EXISTS:
+			s.exists(cmd)
+		case CMD_EXPIRE:
+			s.expire(cmd)
+		case CMD_PERSIST:
+			s.persist(cmd)
 		default:
-			cmd.write(ErrInvalidCmd.Error())
+			cmd.error(ErrInvalidCmd)
 		}
 	}
 }

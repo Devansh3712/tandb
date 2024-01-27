@@ -18,7 +18,7 @@ func NewStore() Store {
 	}
 }
 
-func (s *Store) Has(key string) bool {
+func (s *Store) Exists(key string) bool {
 	s.Mutex.RLock()
 	defer s.Mutex.RUnlock()
 
@@ -27,7 +27,7 @@ func (s *Store) Has(key string) bool {
 }
 
 func (s *Store) SetEx(key string, value []byte, expiration time.Duration) error {
-	if s.Has(key) {
+	if s.Exists(key) {
 		return ErrKeyExists
 	}
 	s.Mutex.Lock()
@@ -67,14 +67,14 @@ func (s *Store) MGet(keys []string) [][]byte {
 }
 
 func (s *Store) Del(key string) error {
-	if !s.Has(key) {
+	if !s.Exists(key) {
 		return ErrKeyNotExists
 	}
 	delete(s.Records, key)
 	return nil
 }
 
-func (s *Store) Exp(key string, expiration time.Duration) error {
+func (s *Store) Expire(key string, expiration time.Duration) error {
 	s.Mutex.Lock()
 	defer s.Mutex.Unlock()
 
@@ -85,6 +85,10 @@ func (s *Store) Exp(key string, expiration time.Duration) error {
 	value.Expiration = expiration
 	s.Records[key] = value
 	return nil
+}
+
+func (s *Store) Persist(key string) error {
+	return s.Expire(key, -1)
 }
 
 func (s *Store) Keys() []string {

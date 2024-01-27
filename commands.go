@@ -61,16 +61,16 @@ func (s *Server) del(cmd Command) {
 func (s *Server) mGet(cmd Command) {
 	result := s.DB.MGet(cmd.Args)
 	for index, value := range result {
-		cmd.write(fmt.Sprintf("%d) %s", index + 1, value))
+		cmd.write(fmt.Sprintf("%d) %s", index+1, value))
 	}
 }
 
-func (s *Server) exp(cmd Command) {
+func (s *Server) expire(cmd Command) {
 	expiration, err := strconv.Atoi(cmd.Args[1])
 	if err != nil {
 		cmd.error(ErrInvalidExp)
 	}
-	err = s.DB.Exp(cmd.Args[0], time.Duration(expiration))
+	err = s.DB.Expire(cmd.Args[0], time.Duration(expiration))
 	if err != nil {
 		cmd.error(ErrKeyNotExists)
 	}
@@ -79,6 +79,22 @@ func (s *Server) exp(cmd Command) {
 func (s *Server) keys(cmd Command) {
 	keys := s.DB.Keys()
 	for index, key := range keys {
-		cmd.write(fmt.Sprintf("%d) %s", index + 1, key))
+		cmd.write(fmt.Sprintf("%d) %s", index+1, key))
+	}
+}
+
+func (s *Server) exists(cmd Command) {
+	ok := s.DB.Exists(cmd.Args[0])
+	if !ok {
+		cmd.write("FALSE")
+		return
+	}
+	cmd.write("TRUE")
+}
+
+func (s *Server) persist(cmd Command) {
+	err := s.DB.Persist(cmd.Args[0])
+	if err != nil {
+		cmd.error(ErrKeyNotExists)
 	}
 }
