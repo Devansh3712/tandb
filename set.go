@@ -1,3 +1,8 @@
+// Unsorted set implementation using map. It stores the elements
+// as a key and an empty struct as value, as an empty struct takes
+// 0 bytes of memory. The methods are concurrency safe, using a
+// read-write mutex.
+
 package main
 
 import (
