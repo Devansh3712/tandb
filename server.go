@@ -17,6 +17,13 @@ const (
 	CMD_EXISTS  = "EXISTS"
 	CMD_EXPIRE  = "EXPIRE"
 	CMD_PERSIST = "PERSIST"
+
+	CMD_SADD       = "SADD"
+	CMD_SCARD      = "SCARD"
+	CMD_SDIFF      = "SDIFF"
+	CMD_SMEMBERS   = "SMEMBERS"
+	CMD_SISMEMBER  = "SISMEMBER"
+	CMD_SDIFFSTORE = "SDIFFSTORE"
 )
 
 func NewServer(addr string) Server {
@@ -91,6 +98,16 @@ func (s *Server) HandleCommand() {
 			s.expire(cmd)
 		case CMD_PERSIST:
 			s.persist(cmd)
+		case CMD_SADD:
+			s.sAdd(cmd)
+		case CMD_SCARD:
+			s.sCard(cmd)
+		case CMD_SDIFF:
+			s.sDiff(cmd)
+		case CMD_SMEMBERS:
+			s.sMembers(cmd)
+		case CMD_SISMEMBER:
+			s.sIsMember(cmd)
 		default:
 			cmd.error(ErrInvalidCmd)
 		}

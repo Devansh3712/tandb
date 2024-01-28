@@ -16,7 +16,7 @@ var (
 
 func NewSet() Set {
 	return Set{
-		Mutex: &sync.RWMutex{},
+		Mutex:    &sync.RWMutex{},
 		Elements: make(map[string]struct{}),
 	}
 }
