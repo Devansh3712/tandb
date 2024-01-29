@@ -70,8 +70,8 @@ func (s *Store) Get(key string) ([]byte, error) {
 func (s *Store) MGet(keys []string) [][]byte {
 	s.Mutex.RLock()
 	defer s.Mutex.RUnlock()
-	var values [][]byte
 
+	var values [][]byte
 	for _, key := range keys {
 		value, _ := s.Get(key)
 		values = append(values, value)
@@ -81,6 +81,9 @@ func (s *Store) MGet(keys []string) [][]byte {
 
 // Delete a key-value pair.
 func (s *Store) Del(key string) error {
+	s.Mutex.Lock()
+	defer s.Mutex.Unlock()
+
 	if !s.Exists(key) {
 		return ErrKeyNotExists
 	}
@@ -109,10 +112,10 @@ func (s *Store) Persist(key string) error {
 
 // Fetch all keys in the store.
 func (s *Store) Keys() []string {
-	var keys []string
 	s.Mutex.RLock()
 	defer s.Mutex.RUnlock()
 
+	var keys []string
 	for key := range s.Records {
 		keys = append(keys, key)
 	}
