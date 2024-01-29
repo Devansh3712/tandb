@@ -190,19 +190,13 @@ func (s *Store) SDiff(s1, s2 string) ([]string, error) {
 }
 
 func (s *Store) SDiffStore(s1, s2, s3 string) error {
-	s.Mutex.Lock()
-	defer s.Mutex.Unlock()
-
-	v1, ok := s.Sets[s1]
-	if !ok {
-		return fmt.Errorf("the set %s does not exist", s1)
+	elements, err := s.SDiff(s1, s2)
+	if err != nil {
+		return err
 	}
-	v2, ok := s.Sets[s2]
-	if !ok {
-		return fmt.Errorf("the set %s does not exist", s2)
+	for _, element := range elements {
+		s.SAdd(s3, element)
 	}
-	
-	s.Sets[s3] = v1.Difference(v2)
 	return nil
 }
 
