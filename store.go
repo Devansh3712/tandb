@@ -189,6 +189,23 @@ func (s *Store) SDiff(s1, s2 string) ([]string, error) {
 	return elements, nil
 }
 
+func (s *Store) SDiffStore(s1, s2, s3 string) error {
+	s.Mutex.Lock()
+	defer s.Mutex.Unlock()
+
+	v1, ok := s.Sets[s1]
+	if !ok {
+		return fmt.Errorf("the set %s does not exist", s1)
+	}
+	v2, ok := s.Sets[s2]
+	if !ok {
+		return fmt.Errorf("the set %s does not exist", s2)
+	}
+	
+	s.Sets[s3] = v1.Difference(v2)
+	return nil
+}
+
 // Run a background job to check if any key has reached its expiration
 // time and remove it from the store.
 func (s *Store) checkTTL() {

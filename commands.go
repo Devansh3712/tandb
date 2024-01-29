@@ -146,3 +146,10 @@ func (s *Server) sDiff(cmd Command) {
 		cmd.write(fmt.Sprintf("%d) %s", index+1, element))
 	}
 }
+
+func (s *Server) sDiffStore(cmd Command) {
+	err := s.DB.SDiffStore(cmd.Args[0], cmd.Args[1], cmd.Args[2])
+	if err != nil {
+		cmd.error(err)
+	}
+}

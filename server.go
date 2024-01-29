@@ -108,6 +108,8 @@ func (s *Server) HandleCommand() {
 			s.sMembers(cmd)
 		case CMD_SISMEMBER:
 			s.sIsMember(cmd)
+		case CMD_SDIFFSTORE:
+			s.sDiffStore(cmd)
 		default:
 			cmd.error(ErrInvalidCmd)
 		}
