@@ -17,6 +17,20 @@ type Set struct {
 	Elements map[string]struct{}
 }
 
+type Node struct {
+	Color  int
+	Value  string
+	Score  int
+	Parent *Node
+	Left   *Node
+	Right  *Node
+}
+
+type RBTree struct {
+	Mutex *sync.RWMutex
+	Root *Node
+}
+
 type Store struct {
 	Mutex   *sync.RWMutex
 	Records map[string]Value
