@@ -5,15 +5,18 @@ const (
 	BLACK
 )
 
-func NewNode(score int, value string) *Node {
+func NewNode(value string) *Node {
 	return &Node{
 		Color: RED,
 		Value: value,
-		Score: score,
 		Parent: nil,
 		Left: nil,
 		Right: nil,
 	}
+}
+
+func NewRBTree() *RBTree {
+	return &RBTree{Root: nil, Count: 0}
 }
 
 func (t *RBTree) leftRotate(node *Node) {
@@ -63,36 +66,26 @@ func (t *RBTree) rightRotate(node *Node) {
 	node.Parent = lnode
 }
 
-func (t *RBTree) insert(score int, value string) {
-	node := NewNode(score, value)
-
-	var temp *Node
-	root := t.Root
-
-	for root != nil {
-		temp = root
-		if node.Score < root.Score {
-			root = root.Left
+func (t *RBTree) search(value string) bool {
+	temp := t.Root
+	for temp != nil {
+		if temp.Value == value {
+			return true
+		}
+		if temp.Value > value {
+			temp = temp.Left
 		} else {
-			root = root.Right
+			temp = temp.Right
 		}
 	}
-	node.Parent = temp
-
-	if temp == nil {
-		t.Root = node
-	} else if node.Score < temp.Score {
-		temp.Left = node
-	} else {
-		temp.Right = node
-	}
+	return false
 }
 
 func (t *RBTree) fixInsert(node *Node) {
-	for node.Parent.Color == RED {
+	for node.Parent != nil && node.Parent.Color == RED {
 		if node.Parent == node.Parent.Parent.Left {
 			uncle := node.Parent.Parent.Right
-			if uncle.Color == RED {
+			if uncle != nil && uncle.Color == RED {
 				// Both uncle and parent are red, grandparent must be black
 				// Repaint parent and uncle to black and grandparent to red
 				node.Parent.Color = BLACK
@@ -110,7 +103,7 @@ func (t *RBTree) fixInsert(node *Node) {
 			}
 		} else {
 			uncle := node.Parent.Parent.Left
-			if uncle.Color == RED {
+			if uncle != nil && uncle.Color == RED {
 				node.Parent.Color = BLACK
 				uncle.Color = BLACK
 				node.Parent.Parent.Color = RED
@@ -127,4 +120,58 @@ func (t *RBTree) fixInsert(node *Node) {
 		}
 	}
 	t.Root.Color = BLACK
+}
+
+func (t *RBTree) insert(value string) {
+	if ok := t.search(value); ok {
+		return
+	}
+	node := NewNode(value)
+
+	var temp *Node
+	root := t.Root
+
+	for root != nil {
+		temp = root
+		if node.Value < root.Value {
+			root = root.Left
+		} else {
+			root = root.Right
+		}
+	}
+	node.Parent = temp
+
+	if temp == nil {
+		t.Root = node
+	} else if node.Value < temp.Value {
+		temp.Left = node
+	} else {
+		temp.Right = node
+	}
+	t.Count++
+	t.fixInsert(node)
+}
+
+func inorder(node *Node, elements chan string) {
+	if node == nil {
+		return
+	}
+	inorder(node.Left, elements)
+	elements <- node.Value
+	inorder(node.Right, elements)
+}
+
+func (t *RBTree) members() []string {
+	var result []string
+	elements := make(chan string, t.Count)
+
+	go func() {
+		defer close(elements)
+		inorder(t.Root, elements)
+	}()
+
+	for element := range elements {
+		result = append(result, element)
+	}
+	return result
 }

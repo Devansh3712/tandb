@@ -20,7 +20,6 @@ type Set struct {
 type Node struct {
 	Color  int
 	Value  string
-	Score  int
 	Parent *Node
 	Left   *Node
 	Right  *Node
@@ -29,6 +28,7 @@ type Node struct {
 type RBTree struct {
 	Mutex *sync.RWMutex
 	Root *Node
+	Count uint
 }
 
 type Store struct {
