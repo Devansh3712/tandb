@@ -44,13 +44,14 @@ func (s *Set) Exists(element string) bool {
 }
 
 func (s *Set) Remove(element string) error {
-	s.Mutex.Lock()
-	defer s.Mutex.Unlock()
-
 	if ok := s.Exists(element); !ok {
 		return ErrElementNotExists
 	}
+
+	s.Mutex.Lock()
+	defer s.Mutex.Unlock()
 	delete(s.Elements, element)
+
 	return nil
 }
 

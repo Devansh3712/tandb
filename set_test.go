@@ -37,3 +37,11 @@ func TestExists(t *testing.T) {
 		t.Errorf("got %t, wanted %t", got, want)
 	}
 }
+
+func TestRemove(t *testing.T) {
+	set := createTestSet()
+
+	if err := set.Remove("hello"); err != nil {
+		t.Errorf("got %s, wanted nil", err.Error())
+	}
+}
