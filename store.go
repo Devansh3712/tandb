@@ -81,12 +81,13 @@ func (s *Store) MGet(keys []string) [][]byte {
 
 // Delete a key-value pair.
 func (s *Store) Del(key string) error {
-	s.Mutex.Lock()
-	defer s.Mutex.Unlock()
-
 	if !s.Exists(key) {
 		return ErrKeyNotExists
 	}
+
+	s.Mutex.Lock()
+	defer s.Mutex.Unlock()
+
 	delete(s.Records, key)
 	return nil
 }
@@ -209,12 +210,10 @@ func (s *Store) checkTTL() {
 	for {
 		time.Sleep(time.Second)
 
-		s.Mutex.Lock()
 		for key, value := range s.Records {
 			if value.expired() {
-				delete(s.Records, key)
+				s.Del(key)
 			}
 		}
-		s.Mutex.Unlock()
 	}
 }
