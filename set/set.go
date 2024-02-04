@@ -3,7 +3,7 @@
 // 0 bytes of memory. The methods are concurrency safe, using a
 // read-write mutex.
 
-package main
+package set
 
 import (
 	"errors"
@@ -13,6 +13,11 @@ import (
 var (
 	ErrElementNotExists = errors.New("the element does not exist in set")
 )
+
+type Set struct {
+	Mutex    *sync.RWMutex
+	Elements map[string]struct{}
+}
 
 func NewSet() Set {
 	return Set{
@@ -58,26 +63,16 @@ func (s *Set) Remove(element string) error {
 func (s1 *Set) Union(s2 Set) Set {
 	elements := NewSet()
 
-	s1.Mutex.RLock()
 	for element := range s1.Elements {
 		elements.Add(element)
 	}
-	s1.Mutex.RUnlock()
-
-	s2.Mutex.RLock()
 	for element := range s2.Elements {
 		elements.Add(element)
 	}
-	s2.Mutex.RUnlock()
 	return elements
 }
 
 func (s1 *Set) Intersection(s2 Set) Set {
-	s1.Mutex.RLock()
-	s2.Mutex.RLock()
-	defer s1.Mutex.RUnlock()
-	defer s2.Mutex.RUnlock()
-
 	elements := NewSet()
 	for element := range s1.Elements {
 		if s2.Exists(element) {
@@ -88,11 +83,6 @@ func (s1 *Set) Intersection(s2 Set) Set {
 }
 
 func (s1 *Set) Difference(s2 Set) Set {
-	s1.Mutex.RLock()
-	s2.Mutex.RLock()
-	defer s1.Mutex.RUnlock()
-	defer s2.Mutex.RUnlock()
-
 	elements := NewSet()
 	for element := range s1.Elements {
 		if !s2.Exists(element) {
@@ -103,11 +93,6 @@ func (s1 *Set) Difference(s2 Set) Set {
 }
 
 func (s1 *Set) Subset(s2 Set) bool {
-	s1.Mutex.RLock()
-	s2.Mutex.RLock()
-	defer s1.Mutex.RUnlock()
-	defer s2.Mutex.RUnlock()
-
 	for element := range s1.Elements {
 		if !s2.Exists(element) {
 			return false

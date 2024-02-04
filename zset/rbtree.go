@@ -1,17 +1,33 @@
-package main
+package zset
+
+import "sync"
 
 const (
 	RED = iota
 	BLACK
 )
 
+type Node struct {
+	Color  int
+	Value  string
+	Parent *Node
+	Left   *Node
+	Right  *Node
+}
+
+type RBTree struct {
+	Mutex *sync.RWMutex
+	Root  *Node
+	Count uint
+}
+
 func NewNode(value string) *Node {
 	return &Node{
-		Color: RED,
-		Value: value,
+		Color:  RED,
+		Value:  value,
 		Parent: nil,
-		Left: nil,
-		Right: nil,
+		Left:   nil,
+		Right:  nil,
 	}
 }
 
@@ -46,7 +62,7 @@ func (t *RBTree) leftRotate(node *Node) {
 func (t *RBTree) rightRotate(node *Node) {
 	if node.Left == nil {
 		return
-	}	
+	}
 	lnode := node.Left
 	node.Left = lnode.Right
 	if lnode.Right != nil {

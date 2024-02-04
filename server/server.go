@@ -1,13 +1,17 @@
-package main
+package server
 
 import (
 	"bufio"
+	"errors"
 	"log"
 	"net"
 	"strings"
+
+	"github.com/Devansh3712/tandb/store"
 )
 
 const (
+	// Generic commands
 	CMD_GET     = "GET"
 	CMD_DEL     = "DEL"
 	CMD_SET     = "SET"
@@ -17,7 +21,7 @@ const (
 	CMD_EXISTS  = "EXISTS"
 	CMD_EXPIRE  = "EXPIRE"
 	CMD_PERSIST = "PERSIST"
-
+	// Set commands
 	CMD_SADD       = "SADD"
 	CMD_SCARD      = "SCARD"
 	CMD_SDIFF      = "SDIFF"
@@ -26,9 +30,24 @@ const (
 	CMD_SDIFFSTORE = "SDIFFSTORE"
 )
 
+var ErrInvalidCmd = errors.New("invalid command")
+
+type Command struct {
+	Value string
+	Args  []string
+	Conn  net.Conn
+}
+
+type Server struct {
+	Addr     string
+	Listener net.Listener
+	DB       store.Store
+	Commands chan Command
+}
+
 func NewServer(addr string) Server {
 	return Server{
-		Addr: addr, Commands: make(chan Command), DB: NewStore(),
+		Addr: addr, Commands: make(chan Command), DB: store.NewStore(),
 	}
 }
 
@@ -40,14 +59,11 @@ func (s *Server) Start() {
 	defer listener.Close()
 	s.Listener = listener
 
-	go s.DB.checkTTL()
-	s.Wg.Add(1)
-	go s.HandleConnections()
-	s.Wg.Wait()
+	go s.DB.CheckTTL()
+	s.HandleConnections()
 }
 
 func (s *Server) HandleConnections() {
-	defer s.Wg.Done()
 	for {
 		conn, err := s.Listener.Accept()
 		if err != nil {
@@ -76,9 +92,7 @@ func (s *Server) ReadCommand(conn net.Conn) {
 }
 
 func (s *Server) HandleCommand() {
-	for {
-		cmd := <-s.Commands
-
+	for cmd := range s.Commands {
 		switch cmd.Value {
 		case CMD_GET:
 			s.get(cmd)
