@@ -80,3 +80,12 @@ func (s *Server) persist(cmd Command) {
 		cmd.error(err)
 	}
 }
+
+func (s *Server) expireTime(cmd Command) {
+	exp, err := s.DB.ExpireTime(cmd.Args[0])
+	if err != nil {
+		cmd.error(err)
+		return
+	}
+	cmd.write(strconv.FormatInt(exp, 10))
+}

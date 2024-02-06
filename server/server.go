@@ -12,15 +12,16 @@ import (
 
 const (
 	// Generic commands
-	CMD_GET     = "GET"
-	CMD_DEL     = "DEL"
-	CMD_SET     = "SET"
-	CMD_KEYS    = "KEYS"
-	CMD_MGET    = "MGET"
-	CMD_SETEX   = "SETEX"
-	CMD_EXISTS  = "EXISTS"
-	CMD_EXPIRE  = "EXPIRE"
-	CMD_PERSIST = "PERSIST"
+	CMD_GET         = "GET"
+	CMD_DEL         = "DEL"
+	CMD_SET         = "SET"
+	CMD_KEYS        = "KEYS"
+	CMD_MGET        = "MGET"
+	CMD_SETEX       = "SETEX"
+	CMD_EXISTS      = "EXISTS"
+	CMD_EXPIRE      = "EXPIRE"
+	CMD_PERSIST     = "PERSIST"
+	CMD_EXPIRE_TIME = "EXPIRETIME"
 	// Set commands
 	CMD_SADD       = "SADD"
 	CMD_SCARD      = "SCARD"
@@ -112,6 +113,8 @@ func (s *Server) HandleCommand() {
 			s.expire(cmd)
 		case CMD_PERSIST:
 			s.persist(cmd)
+		case CMD_EXPIRE_TIME:
+			s.expireTime(cmd)
 		case CMD_SADD:
 			s.sAdd(cmd)
 		case CMD_SCARD:

@@ -125,3 +125,16 @@ func (s *Store) Keys() []string {
 	}
 	return keys
 }
+
+// Returns the expiration time of a key as Unix timestamp.
+func (s *Store) ExpireTime(key string) (int64, error) {
+	s.Mutex.RLock()
+	defer s.Mutex.RUnlock()
+
+	value, ok := s.Records[key]
+	if !ok {
+		return 0, ErrKeyNotExists
+	}
+	expireTime := value.Timestamp.Add(value.Expiration)
+	return expireTime.Unix(), nil
+}
