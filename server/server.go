@@ -15,6 +15,7 @@ const (
 	CMD_GET         = "GET"
 	CMD_DEL         = "DEL"
 	CMD_SET         = "SET"
+	CMD_TTL         = "TTL"
 	CMD_KEYS        = "KEYS"
 	CMD_MGET        = "MGET"
 	CMD_SETEX       = "SETEX"
@@ -101,6 +102,8 @@ func (s *Server) HandleCommand() {
 			s.del(cmd)
 		case CMD_SET:
 			s.set(cmd)
+		case CMD_TTL:
+			s.ttl(cmd)
 		case CMD_KEYS:
 			s.keys(cmd)
 		case CMD_MGET:

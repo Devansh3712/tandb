@@ -89,3 +89,12 @@ func (s *Server) expireTime(cmd Command) {
 	}
 	cmd.write(strconv.FormatInt(exp, 10))
 }
+
+func (s *Server) ttl(cmd Command) {
+	ttl, err := s.DB.TTL(cmd.Args[0])
+	if err != nil {
+		cmd.error(err)
+		return
+	}
+	cmd.write(strconv.FormatFloat(ttl, 'f', 0, 64))
+}

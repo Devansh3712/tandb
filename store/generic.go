@@ -21,7 +21,7 @@ func (v *Value) expired() bool {
 		return false
 	}
 	now := time.Now()
-	ttl := v.Timestamp.Add(time.Second * v.Expiration)
+	ttl := v.Timestamp.Add(v.Expiration)
 	return now.After(ttl)
 }
 
@@ -46,7 +46,7 @@ func (s *Store) SetEx(key string, value []byte, expiration time.Duration) error 
 	defer s.Mutex.Unlock()
 
 	s.Records[key] = Value{
-		Timestamp: time.Now(), Data: value, Expiration: expiration,
+		Timestamp: time.Now(), Data: value, Expiration: expiration * time.Second,
 	}
 	return nil
 }
@@ -137,4 +137,17 @@ func (s *Store) ExpireTime(key string) (int64, error) {
 	}
 	expireTime := value.Timestamp.Add(value.Expiration)
 	return expireTime.Unix(), nil
+}
+
+// Returns the expiration time in seconds of a key
+func (s *Store) TTL(key string) (float64, error) {
+	s.Mutex.RLock()
+	defer s.Mutex.RUnlock()
+
+	value, ok := s.Records[key]
+	if !ok {
+		return 0, ErrKeyNotExists
+	}
+	ttl := time.Until(value.Timestamp.Add(value.Expiration))
+	return ttl.Seconds(), nil
 }
