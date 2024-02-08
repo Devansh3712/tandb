@@ -7,6 +7,10 @@ import (
 )
 
 func (s *Server) get(cmd Command) {
+	if len(cmd.Args) < 1 {
+		cmd.error(ErrNotEnoughArgs)
+		return
+	}
 	result, err := s.DB.Get(cmd.Args[0])
 	if err != nil {
 		cmd.error(err)
@@ -16,6 +20,10 @@ func (s *Server) get(cmd Command) {
 }
 
 func (s *Server) set(cmd Command) {
+	if len(cmd.Args) < 2 {
+		cmd.error(ErrNotEnoughArgs)
+		return
+	}
 	err := s.DB.Set(cmd.Args[0], []byte(cmd.Args[1]))
 	if err != nil {
 		cmd.error(err)
@@ -23,6 +31,10 @@ func (s *Server) set(cmd Command) {
 }
 
 func (s *Server) setEx(cmd Command) {
+	if len(cmd.Args) < 3 {
+		cmd.error(ErrNotEnoughArgs)
+		return
+	}
 	ttl, err := strconv.Atoi(cmd.Args[2])
 	if err != nil {
 		cmd.error(err)
@@ -34,6 +46,10 @@ func (s *Server) setEx(cmd Command) {
 }
 
 func (s *Server) del(cmd Command) {
+	if len(cmd.Args) < 1 {
+		cmd.error(ErrNotEnoughArgs)
+		return
+	}
 	err := s.DB.Del(cmd.Args[0])
 	if err != nil {
 		cmd.error(err)
@@ -48,6 +64,10 @@ func (s *Server) mGet(cmd Command) {
 }
 
 func (s *Server) expire(cmd Command) {
+	if len(cmd.Args) < 2 {
+		cmd.error(ErrNotEnoughArgs)
+		return
+	}
 	expiration, err := strconv.Atoi(cmd.Args[1])
 	if err != nil {
 		cmd.error(err)
@@ -66,6 +86,10 @@ func (s *Server) keys(cmd Command) {
 }
 
 func (s *Server) exists(cmd Command) {
+	if len(cmd.Args) < 1 {
+		cmd.error(ErrNotEnoughArgs)
+		return
+	}
 	ok := s.DB.Exists(cmd.Args[0])
 	if !ok {
 		cmd.write("FALSE")
@@ -75,6 +99,10 @@ func (s *Server) exists(cmd Command) {
 }
 
 func (s *Server) persist(cmd Command) {
+	if len(cmd.Args) < 1 {
+		cmd.error(ErrNotEnoughArgs)
+		return
+	}
 	err := s.DB.Persist(cmd.Args[0])
 	if err != nil {
 		cmd.error(err)
@@ -82,6 +110,10 @@ func (s *Server) persist(cmd Command) {
 }
 
 func (s *Server) expireTime(cmd Command) {
+	if len(cmd.Args) < 1 {
+		cmd.error(ErrNotEnoughArgs)
+		return
+	}
 	exp, err := s.DB.ExpireTime(cmd.Args[0])
 	if err != nil {
 		cmd.error(err)
@@ -91,6 +123,10 @@ func (s *Server) expireTime(cmd Command) {
 }
 
 func (s *Server) ttl(cmd Command) {
+	if len(cmd.Args) < 1 {
+		cmd.error(ErrNotEnoughArgs)
+		return
+	}
 	ttl, err := s.DB.TTL(cmd.Args[0])
 	if err != nil {
 		cmd.error(err)

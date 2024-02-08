@@ -1,6 +1,11 @@
 package server
 
-import "log"
+import (
+	"errors"
+	"log"
+)
+
+var ErrNotEnoughArgs = errors.New("not enough arguments for command")
 
 func (c *Command) write(msg string) {
 	_, err := c.Conn.Write([]byte(msg + "\n"))
