@@ -27,6 +27,7 @@ const (
 	CMD_SADD       = "SADD"
 	CMD_SCARD      = "SCARD"
 	CMD_SDIFF      = "SDIFF"
+	CMD_SINTER     = "SINTER"
 	CMD_SMEMBERS   = "SMEMBERS"
 	CMD_SISMEMBER  = "SISMEMBER"
 	CMD_SDIFFSTORE = "SDIFFSTORE"
@@ -124,6 +125,8 @@ func (s *Server) HandleCommand() {
 			s.sCard(cmd)
 		case CMD_SDIFF:
 			s.sDiff(cmd)
+		case CMD_SINTER:
+			s.sInter(cmd)
 		case CMD_SMEMBERS:
 			s.sMembers(cmd)
 		case CMD_SISMEMBER:

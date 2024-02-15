@@ -101,3 +101,24 @@ func (s *Store) SDiffStore(s1, s2, s3 string) error {
 	}
 	return nil
 }
+
+func (s *Store) SInter(s1, s2 string) ([]string, error) {
+	s.Mutex.RLock()
+	defer s.Mutex.RUnlock()
+
+	var elements []string
+	v1, ok := s.Sets[s1]
+	if !ok {
+		return nil, fmt.Errorf("the set %s does not exist", s1)
+	}
+	v2, ok := s.Sets[s2]
+	if !ok {
+		return nil, fmt.Errorf("the set %s does not exist", s2)
+	}
+
+	inter := v1.Intersection(v2)
+	for element := range inter.Elements {
+		elements = append(elements, element)
+	}
+	return elements, nil
+}

@@ -83,3 +83,18 @@ func (s *Server) sDiffStore(cmd Command) {
 		cmd.error(err)
 	}
 }
+
+func (s *Server) sInter(cmd Command) {
+	if len(cmd.Args) < 2 {
+		cmd.error(ErrNotEnoughArgs)
+		return
+	}
+	elements, err := s.DB.SInter(cmd.Args[0], cmd.Args[1])
+	if err != nil {
+		cmd.error(err)
+		return
+	}
+	for index, element := range elements {
+		cmd.write(fmt.Sprintf("%d) %s", index+1, element))
+	}
+}
