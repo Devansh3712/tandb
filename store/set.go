@@ -122,3 +122,14 @@ func (s *Store) SInter(s1, s2 string) ([]string, error) {
 	}
 	return elements, nil
 }
+
+func (s *Store) SInterStore(s1, s2, s3 string) error {
+	elements, err := s.SInter(s1, s2)
+	if err != nil {
+		return err
+	}
+	for _, element := range elements {
+		s.SAdd(s3, element)
+	}
+	return nil
+}

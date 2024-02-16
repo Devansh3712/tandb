@@ -31,6 +31,7 @@ const (
 	CMD_SMEMBERS   = "SMEMBERS"
 	CMD_SISMEMBER  = "SISMEMBER"
 	CMD_SDIFFSTORE = "SDIFFSTORE"
+	CMD_SINTERSTORE = "SINTERSTORE"
 )
 
 var ErrInvalidCmd = errors.New("invalid command")
@@ -133,6 +134,8 @@ func (s *Server) HandleCommand() {
 			s.sIsMember(cmd)
 		case CMD_SDIFFSTORE:
 			s.sDiffStore(cmd)
+		case CMD_SINTERSTORE:
+			s.sInterStore(cmd)
 		default:
 			cmd.error(ErrInvalidCmd)
 		}

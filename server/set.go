@@ -98,3 +98,14 @@ func (s *Server) sInter(cmd Command) {
 		cmd.write(fmt.Sprintf("%d) %s", index+1, element))
 	}
 }
+
+func (s *Server) sInterStore(cmd Command) {
+	if len(cmd.Args) < 3 {
+		cmd.error(ErrNotEnoughArgs)
+		return
+	}
+	err := s.DB.SInterStore(cmd.Args[0], cmd.Args[1], cmd.Args[2])
+	if err != nil {
+		cmd.error(err)
+	}
+}
