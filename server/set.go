@@ -109,3 +109,18 @@ func (s *Server) sInterStore(cmd Command) {
 		cmd.error(err)
 	}
 }
+
+func (s *Server) sUnion(cmd Command) {
+	if len(cmd.Args) < 2 {
+		cmd.error(ErrNotEnoughArgs)
+		return
+	}
+	elements, err := s.DB.SUnion(cmd.Args[0], cmd.Args[1])
+	if err != nil {
+		cmd.error(err)
+		return
+	}
+	for index, element := range elements {
+		cmd.write(fmt.Sprintf("%d) %s", index+1, element))
+	}
+}

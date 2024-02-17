@@ -24,13 +24,14 @@ const (
 	CMD_PERSIST     = "PERSIST"
 	CMD_EXPIRE_TIME = "EXPIRETIME"
 	// Set commands
-	CMD_SADD       = "SADD"
-	CMD_SCARD      = "SCARD"
-	CMD_SDIFF      = "SDIFF"
-	CMD_SINTER     = "SINTER"
-	CMD_SMEMBERS   = "SMEMBERS"
-	CMD_SISMEMBER  = "SISMEMBER"
-	CMD_SDIFFSTORE = "SDIFFSTORE"
+	CMD_SADD        = "SADD"
+	CMD_SCARD       = "SCARD"
+	CMD_SDIFF       = "SDIFF"
+	CMD_SINTER      = "SINTER"
+	CMD_SUNION      = "SUNION"
+	CMD_SMEMBERS    = "SMEMBERS"
+	CMD_SISMEMBER   = "SISMEMBER"
+	CMD_SDIFFSTORE  = "SDIFFSTORE"
 	CMD_SINTERSTORE = "SINTERSTORE"
 )
 
@@ -128,6 +129,8 @@ func (s *Server) HandleCommand() {
 			s.sDiff(cmd)
 		case CMD_SINTER:
 			s.sInter(cmd)
+		case CMD_SUNION:
+			s.sUnion(cmd)
 		case CMD_SMEMBERS:
 			s.sMembers(cmd)
 		case CMD_SISMEMBER:
