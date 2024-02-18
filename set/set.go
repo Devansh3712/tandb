@@ -10,9 +10,7 @@ import (
 	"sync"
 )
 
-var (
-	ErrElementNotExists = errors.New("the element does not exist in set")
-)
+var ErrElementNotExists = errors.New("the element does not exist in set")
 
 type Set struct {
 	Mutex    *sync.RWMutex

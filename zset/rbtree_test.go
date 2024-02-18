@@ -17,7 +17,7 @@ func createTestTree() *RBTree {
 
 func TestInsert(t *testing.T) {
 	tree := createTestTree()
-	
+
 	got := tree.members()
 	want := []string{"are", "hello", "how", "world", "you"}
 	if !reflect.DeepEqual(got, want) {

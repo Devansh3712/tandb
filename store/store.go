@@ -5,12 +5,14 @@ import (
 	"time"
 
 	"github.com/Devansh3712/tandb/set"
+	"github.com/Devansh3712/tandb/zset"
 )
 
 type Store struct {
 	Mutex   *sync.RWMutex
 	Records map[string]Value
 	Sets    map[string]set.Set
+	ZSets   map[string]zset.ZSet
 }
 
 func NewStore() Store {
@@ -18,6 +20,7 @@ func NewStore() Store {
 		Mutex:   &sync.RWMutex{},
 		Records: make(map[string]Value),
 		Sets:    make(map[string]set.Set),
+		ZSets:   make(map[string]zset.ZSet),
 	}
 }
 

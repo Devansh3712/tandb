@@ -1,7 +1,5 @@
 package zset
 
-import "sync"
-
 const (
 	RED = iota
 	BLACK
@@ -16,9 +14,8 @@ type Node struct {
 }
 
 type RBTree struct {
-	Mutex *sync.RWMutex
 	Root  *Node
-	Count uint
+	Count int
 }
 
 func NewNode(value string) *Node {
@@ -267,7 +264,7 @@ func (t *RBTree) delete(value string) {
 	if !ok {
 		return
 	}
-	
+
 	var temp *Node
 	if node.Left == nil || node.Right == nil {
 		temp = node
