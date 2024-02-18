@@ -2,7 +2,7 @@ package set
 
 import "testing"
 
-var members = []string{"hello", "world"}
+var members = []string{"hello", "world", "how", "are", "you"}
 
 func createTestSet() Set {
 	set := NewSet()

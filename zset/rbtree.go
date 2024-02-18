@@ -82,11 +82,11 @@ func (t *RBTree) rightRotate(node *Node) {
 	node.Parent = lnode
 }
 
-func (t *RBTree) search(value string) bool {
+func (t *RBTree) search(value string) (*Node, bool) {
 	temp := t.Root
 	for temp != nil {
 		if temp.Value == value {
-			return true
+			return temp, true
 		}
 		if temp.Value > value {
 			temp = temp.Left
@@ -94,7 +94,7 @@ func (t *RBTree) search(value string) bool {
 			temp = temp.Right
 		}
 	}
-	return false
+	return nil, false
 }
 
 func (t *RBTree) fixInsert(node *Node) {
@@ -139,7 +139,7 @@ func (t *RBTree) fixInsert(node *Node) {
 }
 
 func (t *RBTree) insert(value string) {
-	if ok := t.search(value); ok {
+	if _, ok := t.search(value); ok {
 		return
 	}
 	node := NewNode(value)
@@ -166,6 +166,137 @@ func (t *RBTree) insert(value string) {
 	}
 	t.Count++
 	t.fixInsert(node)
+}
+
+func (t *RBTree) min(node *Node) *Node {
+	if node == nil {
+		return nil
+	}
+
+	for node.Left != nil {
+		node = node.Left
+	}
+	return node
+}
+
+func (t *RBTree) max(node *Node) *Node {
+	if node == nil {
+		return nil
+	}
+
+	for node.Right != nil {
+		node = node.Right
+	}
+	return node
+}
+
+func (t *RBTree) successor(node *Node) *Node {
+	if node == nil {
+		return nil
+	}
+
+	if node.Right != nil {
+		return t.min(node.Right)
+	}
+
+	successor := node.Parent
+	for successor != nil && node == successor.Right {
+		node = successor
+		successor = successor.Parent
+	}
+	return successor
+}
+
+func (t *RBTree) fixDelete(node *Node) {
+	for node != t.Root && node.Color == BLACK {
+		if node == node.Parent.Left {
+			cousin := node.Parent.Right
+			if cousin.Color == RED {
+				cousin.Color = BLACK
+				node.Parent.Color = RED
+				t.leftRotate(node.Parent)
+				cousin = node.Parent.Right
+			}
+			if cousin.Left.Color == BLACK && cousin.Right.Color == BLACK {
+				cousin.Color = RED
+				node = node.Parent
+			} else {
+				if cousin.Right.Color == BLACK {
+					cousin.Left.Color = BLACK
+					cousin.Color = RED
+					t.rightRotate(cousin)
+					cousin = node.Parent.Right
+				}
+				cousin.Color = node.Parent.Color
+				node.Parent.Color = BLACK
+				cousin.Right.Color = BLACK
+				t.leftRotate(node.Parent)
+				node = t.Root
+			}
+		} else {
+			cousin := node.Parent.Left
+			if cousin.Color == RED {
+				cousin.Color = BLACK
+				node.Parent.Color = RED
+				t.rightRotate(node.Parent)
+				cousin = node.Parent.Left
+			}
+			if cousin.Left.Color == BLACK && cousin.Right.Color == BLACK {
+				cousin.Color = RED
+				node = node.Parent
+			} else {
+				if cousin.Left.Color == BLACK {
+					cousin.Right.Color = BLACK
+					cousin.Color = RED
+					t.leftRotate(cousin)
+					cousin = node.Parent.Left
+				}
+				cousin.Color = node.Parent.Color
+				node.Parent.Color = BLACK
+				node.Left.Color = BLACK
+				t.rightRotate(node.Parent)
+				node = t.Root
+			}
+		}
+	}
+	node.Color = BLACK
+}
+
+func (t *RBTree) delete(value string) {
+	node, ok := t.search(value)
+	if !ok {
+		return
+	}
+	
+	var temp *Node
+	if node.Left == nil || node.Right == nil {
+		temp = node
+	} else {
+		temp = t.successor(node)
+	}
+	var tchild *Node
+	if temp.Left != nil {
+		tchild = temp.Left
+	} else {
+		tchild = temp.Right
+	}
+
+	tchild.Parent = temp.Parent
+	if temp.Parent == nil {
+		t.Root = tchild
+	} else if temp == temp.Parent.Left {
+		temp.Parent.Left = tchild
+	} else {
+		temp.Parent.Right = tchild
+	}
+
+	if temp != node {
+		node.Value = temp.Value
+	}
+	if temp.Color == BLACK {
+		t.fixDelete(tchild)
+	}
+	t.Count--
 }
 
 func inorder(node *Node, elements chan string) {
