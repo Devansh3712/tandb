@@ -2,7 +2,7 @@ package set
 
 import "testing"
 
-var members = []string{"hello", "world", "how", "are", "you"}
+var members = []string{"hello", "secctan", "how", "are", "you"}
 
 func createTestSet() Set {
 	set := NewSet()
@@ -25,13 +25,13 @@ func TestSize(t *testing.T) {
 func TestExists(t *testing.T) {
 	set := createTestSet()
 
-	got := set.Exists("hello")
+	got := set.Exists("secctan")
 	want := true
 	if got != want {
 		t.Errorf("got %t, wanted %t", got, want)
 	}
 
-	got = set.Exists("secctan")
+	got = set.Exists("world")
 	want = false
 	if got != want {
 		t.Errorf("got %t, wanted %t", got, want)

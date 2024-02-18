@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-var members = []string{"hello", "world", "how", "are", "you"}
+var members = []string{"hello", "secctan", "how", "are", "you"}
 
 func createTestTree() *RBTree {
 	tree := NewRBTree()
@@ -19,7 +19,7 @@ func TestInsert(t *testing.T) {
 	tree := createTestTree()
 
 	got := tree.members()
-	want := []string{"are", "hello", "how", "world", "you"}
+	want := []string{"are", "hello", "how", "secctan", "you"}
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("got %q, wanted %q", got, want)
 	}
@@ -30,7 +30,7 @@ func TestDelete(t *testing.T) {
 	tree.delete("hello")
 
 	got := tree.members()
-	want := []string{"are", "how", "world", "you"}
+	want := []string{"are", "how", "secctan", "you"}
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("got %q, wanted %q", got, want)
 	}
@@ -39,13 +39,13 @@ func TestDelete(t *testing.T) {
 func TestSearch(t *testing.T) {
 	tree := createTestTree()
 
-	_, got := tree.search("hello")
+	_, got := tree.search("secctan")
 	want := true
 	if got != want {
 		t.Errorf("got %t, wanted %t", got, want)
 	}
 
-	_, got = tree.search("secctan")
+	_, got = tree.search("world")
 	want = false
 	if got != want {
 		t.Errorf("got %t, wanted %t", got, want)
