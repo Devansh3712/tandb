@@ -5,6 +5,6 @@
 ## To Do
 - [ ] Implement basic Redis commands
     - [x] Implement `Set` using hash table
-    - [ ] Implement `Sorted Set` using red black tree
+    - [x] Implement `Sorted Set` using red black tree
 - [ ] Add generics to store
 - [ ] Implement hard-disk persistence
