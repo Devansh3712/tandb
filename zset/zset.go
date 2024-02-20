@@ -59,3 +59,43 @@ func (z *ZSet) Members() []string {
 
 	return z.Elements.members()
 }
+
+func (z1 *ZSet) Union(z2 ZSet) ZSet {
+	elements := NewZSet()
+	for _, element := range z1.Members() {
+		elements.Add(element)
+	}
+	for _, element := range z2.Members() {
+		elements.Add(element)
+	}
+	return elements
+}
+
+func (z1 *ZSet) Intersection(z2 ZSet) ZSet {
+	elements := NewZSet()
+	for _, element := range z1.Members() {
+		if z2.Exists(element) {
+			elements.Add(element)
+		}
+	}
+	return elements
+}
+
+func (z1 *ZSet) Difference(z2 ZSet) ZSet {
+	elements := NewZSet()
+	for _, element := range z1.Members() {
+		if !z2.Exists(element) {
+			elements.Add(element)
+		}
+	}
+	return elements
+}
+
+func (z1 *ZSet) Subset(z2 ZSet) bool {
+	for _, element := range z1.Members() {
+		if !z2.Exists(element) {
+			return false
+		}
+	}
+	return true
+}

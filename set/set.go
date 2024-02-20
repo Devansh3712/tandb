@@ -60,7 +60,6 @@ func (s *Set) Remove(element string) error {
 
 func (s1 *Set) Union(s2 Set) Set {
 	elements := NewSet()
-
 	for element := range s1.Elements {
 		elements.Add(element)
 	}
