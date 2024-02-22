@@ -34,7 +34,7 @@ const (
 	CMD_SDIFFSTORE  = "SDIFFSTORE"
 	CMD_SINTERSTORE = "SINTERSTORE"
 	// Sorted set commands
-	CMD_ZADD = "ZADD"
+	CMD_ZADD     = "ZADD"
 	CMD_ZMEMBERS = "ZMEMBERS"
 )
 
