@@ -1,6 +1,9 @@
 package server
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 func (s *Server) zAdd(cmd Command) {
 	if len(cmd.Args) < 2 {
@@ -23,4 +26,17 @@ func (s *Server) zMembers(cmd Command) {
 	for index, element := range elements {
 		cmd.write(fmt.Sprintf("%d) %s", index+1, element))
 	}
+}
+
+func (s *Server) zCard(cmd Command) {
+	if len(cmd.Args) < 1 {
+		cmd.error(ErrNotEnoughArgs)
+		return
+	}
+	size, err := s.DB.ZCard(cmd.Args[0])
+	if err != nil {
+		cmd.error(err)
+		return
+	}
+	cmd.write(strconv.Itoa(size))
 }

@@ -24,3 +24,14 @@ func (s *Store) ZMembers(set string) ([]string, error) {
 	}
 	return value.Members(), nil
 }
+
+func (s *Store) ZCard(set string) (int, error) {
+	s.Mutex.RLock()
+	defer s.Mutex.RUnlock()
+
+	value, ok := s.ZSets[set]
+	if !ok {
+		return 0, ErrSetNotExists
+	}
+	return value.Size(), nil
+}

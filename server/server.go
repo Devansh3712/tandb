@@ -35,6 +35,7 @@ const (
 	CMD_SINTERSTORE = "SINTERSTORE"
 	// Sorted set commands
 	CMD_ZADD     = "ZADD"
+	CMD_ZCARD    = "ZCARD"
 	CMD_ZMEMBERS = "ZMEMBERS"
 )
 
@@ -144,6 +145,8 @@ func (s *Server) HandleCommand() {
 			s.sInterStore(cmd)
 		case CMD_ZADD:
 			s.zAdd(cmd)
+		case CMD_ZCARD:
+			s.zCard(cmd)
 		case CMD_ZMEMBERS:
 			s.zMembers(cmd)
 		default:
